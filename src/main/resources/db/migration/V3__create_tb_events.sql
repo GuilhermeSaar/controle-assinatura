@@ -1,0 +1,10 @@
+
+CREATE TYPE event_type_enum AS ENUM ('SUBSCRIPTION_CREATED', 'PAYMENT_SUCCESS', 'PAYMENT_FAILED');
+
+CREATE TABLE tb_events (
+
+    id UUID PRIMARY KEY,
+    type event_type_enum NOT NULL,
+    data JSON NOT NULL,
+    processed BOOLEAN NOT NULL DEFAULT FALSE
+);
