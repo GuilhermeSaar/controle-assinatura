@@ -35,7 +35,6 @@ public class SubscriptionEventPublisher {
         event.put("plan_id", subscription.getPlan().getId());
         event.put("next_billing_date", subscription.getNextBillingDate().toString());
 
-
         try {
 
             // serializa para json
@@ -49,7 +48,5 @@ public class SubscriptionEventPublisher {
         }catch (JsonProcessingException e) {
             System.err.println("Erro ao serializar evento: " + e.getMessage());
         }
-
     }
-
 }

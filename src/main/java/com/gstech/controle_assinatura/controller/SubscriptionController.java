@@ -20,10 +20,8 @@ public class SubscriptionController {
     @PostMapping
     public ResponseEntity<SubscriptionResponseDTO> createSubscription(@RequestBody SubscriptionRequestDTO data) {
 
-
         SubscriptionResponseDTO response = subscriptionService.createSubscription(data);
 
         return ResponseEntity.ok(response);
     }
-
 }
