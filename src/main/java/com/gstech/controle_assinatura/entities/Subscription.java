@@ -19,7 +19,7 @@ public class Subscription {
     @Column(nullable = false)
     private String customerEmail;
     @Column(nullable = false)
-    private SubscriptionStatus subscriptionStatusEnum;
+    private SubscriptionStatus subscriptionStatus;
     @Column(nullable = false)
     private LocalDate nextBillingDate;
 
@@ -27,13 +27,16 @@ public class Subscription {
         this.id = id;
         this.plan = plan;
         this.customerEmail = customerEmail;
-        this.subscriptionStatusEnum = subscriptionStatusEnum;
+        this.subscriptionStatus = subscriptionStatusEnum;
         this.nextBillingDate = nextBillingDate;
     }
 
     public Subscription() {
     }
 
+    public void setId(UUID id) {
+        this.id = id;
+    }
     public UUID getId() {
         return id;
     }
@@ -54,12 +57,12 @@ public class Subscription {
         this.customerEmail = customerEmail;
     }
 
-    public SubscriptionStatus getSubscriptionStatusEnum() {
-        return subscriptionStatusEnum;
+    public SubscriptionStatus getSubscriptionStatus() {
+        return subscriptionStatus;
     }
 
-    public void setSubscriptionStatusEnum(SubscriptionStatus subscriptionStatusEnum) {
-        this.subscriptionStatusEnum = subscriptionStatusEnum;
+    public void setSubscriptionStatus(SubscriptionStatus subscriptionStatusEnum) {
+        this.subscriptionStatus = subscriptionStatusEnum;
     }
 
     public LocalDate getNextBillingDate() {

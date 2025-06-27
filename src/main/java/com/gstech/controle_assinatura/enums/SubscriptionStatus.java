@@ -2,8 +2,8 @@ package com.gstech.controle_assinatura.enums;
 
 public enum SubscriptionStatus {
 
-    PENDENTE("PENDENTE"),
-    ATIVA("ATIVA");
+    PENDING("PENDENTE"),
+    ACTIVE("ATIVA");
 
     private final String status;
 
