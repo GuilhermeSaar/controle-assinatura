@@ -16,10 +16,11 @@ public class Subscription {
     @ManyToOne
     @JoinColumn(name = "plan_id", nullable = false)
     private Plan plan;
-    @Column(nullable = false)
+    @Column(name = "customer_email", nullable = false)
     private String customerEmail;
     @Column(nullable = false)
-    private SubscriptionStatus subscriptionStatus;
+    @Enumerated(EnumType.STRING)
+    private SubscriptionStatus status;
     @Column(nullable = false)
     private LocalDate nextBillingDate;
 
@@ -27,7 +28,7 @@ public class Subscription {
         this.id = id;
         this.plan = plan;
         this.customerEmail = customerEmail;
-        this.subscriptionStatus = subscriptionStatusEnum;
+        this.status = subscriptionStatusEnum;
         this.nextBillingDate = nextBillingDate;
     }
 
@@ -57,12 +58,12 @@ public class Subscription {
         this.customerEmail = customerEmail;
     }
 
-    public SubscriptionStatus getSubscriptionStatus() {
-        return subscriptionStatus;
+    public SubscriptionStatus getStatus() {
+        return status;
     }
 
-    public void setSubscriptionStatus(SubscriptionStatus subscriptionStatusEnum) {
-        this.subscriptionStatus = subscriptionStatusEnum;
+    public void setStatus(SubscriptionStatus subscriptionStatusEnum) {
+        this.status = subscriptionStatusEnum;
     }
 
     public LocalDate getNextBillingDate() {

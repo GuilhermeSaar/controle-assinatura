@@ -11,7 +11,7 @@ public class Event {
 
     @Id
     private UUID id;
-    @Column(nullable = false)
+    @Column(name = "event_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private EventType type;
     @Column(columnDefinition = "json", nullable = false)

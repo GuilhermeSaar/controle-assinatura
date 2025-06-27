@@ -29,7 +29,7 @@ public class SubscriptionService {
 
     public SubscriptionResponseDTO createSubscription(SubscriptionRequestDTO data) {
 
-        Plan plan = planRepository.findById(data.plan_id())
+        Plan plan = planRepository.findById(data.planId())
                 .orElseThrow(() -> new RuntimeException("Plano nao encontrado"));
 
 
@@ -37,7 +37,7 @@ public class SubscriptionService {
         subscription.setId(UUID.randomUUID());
         subscription.setPlan(plan);
         subscription.setCustomerEmail(data.customerEmail());
-        subscription.setSubscriptionStatus(SubscriptionStatus.PENDING);
+        subscription.setStatus(SubscriptionStatus.PENDENTE);
 
         // define data de cobranca do plano
         LocalDate nextBillingDate;
@@ -57,7 +57,7 @@ public class SubscriptionService {
 
         return new SubscriptionResponseDTO(
                 subscription.getId(),
-                subscription.getSubscriptionStatus(),
+                subscription.getStatus(),
                 subscription.getNextBillingDate()
         );
 

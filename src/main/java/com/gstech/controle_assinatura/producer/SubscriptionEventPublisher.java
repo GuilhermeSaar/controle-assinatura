@@ -17,11 +17,12 @@ public class SubscriptionEventPublisher {
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
+    @Autowired
     private ObjectMapper objectMapper;
 
-    @Value("{$rabbitmq.exchange}")
+    @Value("${rabbitmq.exchange}")
     private String exchange;
-    @Value("{$rabbitmq.routingKey}")
+    @Value("${rabbitmq.routingKey}")
     private String routingKey;
 
     public void publisherSubscriptionCreatedEvent(Subscription subscription) {
