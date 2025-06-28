@@ -1,7 +1,9 @@
 package com.gstech.controle_assinatura.entities;
 
 import com.gstech.controle_assinatura.enums.EventType;
+import com.vladmihalcea.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Type;
 
 import java.util.UUID;
 
@@ -11,9 +13,10 @@ public class Event {
 
     @Id
     private UUID id;
-    @Column(name = "event_type", nullable = false)
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private EventType type;
+    @Type(JsonType.class)
     @Column(columnDefinition = "json", nullable = false)
     private String data;
 

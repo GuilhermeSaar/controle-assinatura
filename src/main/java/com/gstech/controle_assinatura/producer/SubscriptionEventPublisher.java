@@ -56,6 +56,5 @@ public class SubscriptionEventPublisher {
             System.err.println("Erro ao publicar evento: " + e.getMessage());
             e.printStackTrace();
         }
-
     }
 }

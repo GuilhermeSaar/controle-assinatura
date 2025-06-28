@@ -32,6 +32,8 @@ public class SubscriptionService {
         Plan plan = planRepository.findById(data.planId())
                 .orElseThrow(() -> new RuntimeException("Plano nao encontrado"));
 
+        System.out.println("id: " + data.planId());
+
 
         var subscription = new Subscription();
         subscription.setId(UUID.randomUUID());

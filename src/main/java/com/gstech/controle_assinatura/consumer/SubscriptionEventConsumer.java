@@ -2,6 +2,7 @@ package com.gstech.controle_assinatura.consumer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gstech.controle_assinatura.entities.Subscription;
+import com.gstech.controle_assinatura.enums.EventType;
 import com.gstech.controle_assinatura.enums.SubscriptionStatus;
 import com.gstech.controle_assinatura.repository.EventRepository;
 import com.gstech.controle_assinatura.repository.SubscriptionRepository;
@@ -38,17 +39,22 @@ public class SubscriptionEventConsumer {
                     .orElseThrow(() -> new RuntimeException("Assinatura não encontrada"));
 
 
-            subscription.setStatus(SubscriptionStatus.ATIVA);
+            if(EventType.SUBSCRIPTION_CREATED.name().equals(payload.get("type"))) {
+                subscription.setStatus(SubscriptionStatus.PENDENTE);
+                System.out.println("Assinatura registrada no banco: " + subscriptionId);
+            }
+            else if (EventType.PAYMENT_SUCCESS.name().equalsIgnoreCase((String) payload.get("type"))) {
+
+                subscription.setStatus(SubscriptionStatus.ATIVA);
+                System.out.println("Assinatura ativada no banco: " + subscriptionId);
+            }
+
             subscriptionRepository.save(subscription);
 
             eventRepository.findById(subscriptionId).ifPresent(event -> {
                 event.setProcessed(true);
                 eventRepository.save(event);
             });
-
-
-            System.out.println("Assinatura ativada no banco: " + subscriptionId);
-
 
         } catch (Exception e) {
 
