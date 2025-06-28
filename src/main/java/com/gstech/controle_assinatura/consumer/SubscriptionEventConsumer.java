@@ -3,6 +3,7 @@ package com.gstech.controle_assinatura.consumer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gstech.controle_assinatura.entities.Subscription;
 import com.gstech.controle_assinatura.enums.SubscriptionStatus;
+import com.gstech.controle_assinatura.repository.EventRepository;
 import com.gstech.controle_assinatura.repository.SubscriptionRepository;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,8 @@ public class SubscriptionEventConsumer {
     @Autowired
     private SubscriptionRepository subscriptionRepository;
     @Autowired
+    private EventRepository eventRepository;
+    @Autowired
     private ObjectMapper objectMapper;
 
     @RabbitListener(queues = "${rabbitmq.queue}")
@@ -30,15 +33,19 @@ public class SubscriptionEventConsumer {
 
             UUID subscriptionId = UUID.fromString((String) payload.get("id"));
 
-            // busca a assinatura no banco
+
             Subscription subscription = subscriptionRepository.findById(subscriptionId)
                     .orElseThrow(() -> new RuntimeException("Assinatura não encontrada"));
 
-            // Atualiza status para ativa ou o que o evento indicar
+
             subscription.setStatus(SubscriptionStatus.ATIVA);
-
-
             subscriptionRepository.save(subscription);
+
+            eventRepository.findById(subscriptionId).ifPresent(event -> {
+                event.setProcessed(true);
+                eventRepository.save(event);
+            });
+
 
             System.out.println("Assinatura ativada no banco: " + subscriptionId);
 

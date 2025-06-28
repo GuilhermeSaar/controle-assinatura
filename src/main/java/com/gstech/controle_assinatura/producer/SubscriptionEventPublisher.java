@@ -1,9 +1,10 @@
 package com.gstech.controle_assinatura.producer;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gstech.controle_assinatura.entities.Event;
 import com.gstech.controle_assinatura.entities.Subscription;
 import com.gstech.controle_assinatura.enums.EventType;
+import com.gstech.controle_assinatura.repository.EventRepository;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +20,8 @@ public class SubscriptionEventPublisher {
     private RabbitTemplate rabbitTemplate;
     @Autowired
     private ObjectMapper objectMapper;
-
+    @Autowired
+    private EventRepository eventRepository;
     @Value("${rabbitmq.exchange}")
     private String exchange;
     @Value("${rabbitmq.routingKey}")
@@ -27,26 +29,33 @@ public class SubscriptionEventPublisher {
 
     public void publisherSubscriptionCreatedEvent(Subscription subscription) {
 
-        // cria o payload do evento
-        Map<String, Object> event = new HashMap<>();
-        event.put("id", subscription.getId());
-        event.put("type", EventType.SUBSCRIPTION_CREATED);
-        event.put("customer_email", subscription.getCustomerEmail());
-        event.put("plan_id", subscription.getPlan().getId());
-        event.put("next_billing_date", subscription.getNextBillingDate().toString());
-
         try {
 
-            // serializa para json
-            String message = objectMapper.writeValueAsString(event);
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("id", subscription.getId());
+            payload.put("type", EventType.SUBSCRIPTION_CREATED.name());
+            payload.put("customer_email", subscription.getCustomerEmail());
+            payload.put("plan_id", subscription.getPlan().getId());
+            payload.put("next_billing_date", subscription.getNextBillingDate().toString());
 
-            // publica evento na exchange
-            rabbitTemplate.convertAndSend(exchange, routingKey, message);
+            String jsonPayload = objectMapper.writeValueAsString(payload);
 
-            System.out.println("Evento enviado -> " + message);
+            var event = new Event();
+            event.setId(subscription.getId());
+            event.setType(EventType.SUBSCRIPTION_CREATED);
+            event.setData(jsonPayload);
+            event.setProcessed(false);
+            eventRepository.save(event);
 
-        }catch (JsonProcessingException e) {
-            System.err.println("Erro ao serializar evento: " + e.getMessage());
+            rabbitTemplate.convertAndSend(exchange, routingKey, jsonPayload);
+
+            System.out.println("Evento salvo e enviado -> " + jsonPayload);
+
+
+        } catch (Exception e) {
+            System.err.println("Erro ao publicar evento: " + e.getMessage());
+            e.printStackTrace();
         }
+
     }
 }

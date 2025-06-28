@@ -24,6 +24,5 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, UUID
             "LEFT JOIN tb_subscriptions s ON s.plan_id = p.id AND s.status = 'ATIVA' " +
             "GROUP BY p.id, p.name", nativeQuery = true)
     List<Object[]> countActiveSubscriptionsPerPlan();
-
 }
 
