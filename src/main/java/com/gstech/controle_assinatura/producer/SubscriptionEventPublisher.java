@@ -42,7 +42,7 @@ public class SubscriptionEventPublisher {
 
             var event = new Event();
             event.setId(subscription.getId());
-            event.setType(EventType.SUBSCRIPTION_CREATED);
+            event.setType(EventType.valueOf(EventType.SUBSCRIPTION_CREATED.name()));
             event.setData(jsonPayload);
             event.setProcessed(false);
             eventRepository.save(event);

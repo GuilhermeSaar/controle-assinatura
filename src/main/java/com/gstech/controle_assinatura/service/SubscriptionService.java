@@ -41,7 +41,7 @@ public class SubscriptionService {
         subscription.setCustomerEmail(data.customerEmail());
         subscription.setStatus(SubscriptionStatus.PENDENTE);
 
-        // define data de cobranca do plano
+        // cobranca do plano
         LocalDate nextBillingDate;
 
         if (plan.getBillingCycle().equals(BillingCycle.ANUAL)) {
@@ -49,12 +49,10 @@ public class SubscriptionService {
             nextBillingDate = LocalDate.now().plusYears(1);
         } else nextBillingDate = LocalDate.now().plusMonths(1);
 
-
         subscription.setNextBillingDate(nextBillingDate);
-
         subscriptionRepository.save(subscription);
 
-        // publica evento
+
         eventPublisher.publisherSubscriptionCreatedEvent(subscription);
 
         return new SubscriptionResponseDTO(
@@ -64,6 +62,4 @@ public class SubscriptionService {
         );
 
     }
-
-
 }

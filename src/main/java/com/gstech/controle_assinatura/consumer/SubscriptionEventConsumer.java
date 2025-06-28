@@ -1,6 +1,7 @@
 package com.gstech.controle_assinatura.consumer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gstech.controle_assinatura.entities.Event;
 import com.gstech.controle_assinatura.entities.Subscription;
 import com.gstech.controle_assinatura.enums.EventType;
 import com.gstech.controle_assinatura.enums.SubscriptionStatus;
@@ -32,29 +33,35 @@ public class SubscriptionEventConsumer {
 
             System.out.println("Evento recebido no Worker: " + payload);
 
-            UUID subscriptionId = UUID.fromString((String) payload.get("id"));
+            var subscriptionId = UUID.fromString((String) payload.get("id"));
+            var eventTypeStr = (String) payload.get("type");
+            var eventType = EventType.valueOf(eventTypeStr.toUpperCase());
 
 
             Subscription subscription = subscriptionRepository.findById(subscriptionId)
                     .orElseThrow(() -> new RuntimeException("Assinatura não encontrada"));
 
 
-            if(EventType.SUBSCRIPTION_CREATED.name().equals(payload.get("type"))) {
+            if (eventType == EventType.SUBSCRIPTION_CREATED) {
                 subscription.setStatus(SubscriptionStatus.PENDENTE);
-                System.out.println("Assinatura registrada no banco: " + subscriptionId);
+                System.out.println("Assinatura aguardando o pagamento: " + subscriptionId);
             }
-            else if (EventType.PAYMENT_SUCCESS.name().equalsIgnoreCase((String) payload.get("type"))) {
 
+            else if (eventType == EventType.PAYMENT_SUCCESS) {
                 subscription.setStatus(SubscriptionStatus.ATIVA);
-                System.out.println("Assinatura ativada no banco: " + subscriptionId);
+                System.out.println("Pagamento confirmado. Assinatura ativada: " + subscriptionId);
             }
 
             subscriptionRepository.save(subscription);
 
-            eventRepository.findById(subscriptionId).ifPresent(event -> {
-                event.setProcessed(true);
-                eventRepository.save(event);
-            });
+            var event = new Event();
+            event.setId(UUID.randomUUID());
+            event.setType(eventType);
+            event.setProcessed(true);
+            event.setData(message);
+            eventRepository.save(event);
+
+            System.out.println("Evento registrado no banco: " + event.getId());
 
         } catch (Exception e) {
 

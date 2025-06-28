@@ -4,6 +4,5 @@ public enum EventType {
 
     SUBSCRIPTION_CREATED,
     PAYMENT_SUCCESS,
-    PAYMENT_FAILED
-
+    PAYMENT_FAILED;
 }
